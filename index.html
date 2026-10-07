@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOKORE SHOP - Exclusive Apparel & Store</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="logo.png">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#f5d061',
+                            500: '#d4af37',
+                            600: '#aa820a',
+                        },
+                        lokore: {
+                            dark: '#07070a',
+                            card: '#111118',
+                            border: '#242432',
+                            gold: '#d4af37'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Rajdhani', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Archivo CSS local -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#07070a] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-400 selection:text-black">
+
+    <!-- Ambient Glow Background -->
+    <div class="fixed top-0 left-1/4 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none -z-10"></div>
+    <div class="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-yellow-600/5 rounded-full blur-[140px] pointer-events-none -z-10"></div>
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-[#07070a]/90 border-b border-[#242432]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                
+                <!-- Logo & Live Date Badge -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between md:justify-start gap-4">
+                    <div class="flex items-center gap-3">
+                        <img src="logo.png" alt="LOKORE SHOP" class="h-11 w-auto object-contain drop-shadow-[0_0_12px_rgba(212,175,55,0.4)]" onerror="this.onerror=null; this.src='logolokore1.png'">
+                        <div>
+                            <h1 class="font-display font-black text-2xl tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
+                                LOKORE
+                            </h1>
+                            <p class="text-[9px] text-amber-400/90 font-extrabold tracking-[0.3em] uppercase -mt-1">SHOP PARAGUAY</p>
+                        </div>
+                    </div>
+
+                    <!-- Live Date & Clock Widget -->
+                    <div class="relative flex items-center gap-3 bg-gradient-to-r from-[#111118] via-[#161622] to-[#111118] border border-amber-500/30 px-3.5 py-1.5 rounded-2xl shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                                <i class="fa-regular fa-calendar-days text-sm"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span id="liveTime" class="font-mono text-xs font-bold text-amber-300 tracking-wider">00:00:00</span>
+                                </div>
+                                <span id="currentDateDisplay" class="text-[11px] font-bold text-slate-200 capitalize tracking-wide">
+                                    Cargando fecha...
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Indicador Admin -->
+                    <div id="adminBadgeHeader" class="hidden bg-amber-950/40 border border-amber-500/50 px-3 py-1 rounded-xl flex items-center gap-2">
+                        <span class="text-[10px] text-amber-300 font-bold uppercase tracking-wider">Modo Admin</span>
+                        <button id="logoutBtn" class="text-xs text-red-400 hover:text-red-300 font-bold ml-1" title="Cerrar Sesión">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search Bar & Actions -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="relative flex-1 min-w-[180px]">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-amber-500/60"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar en Lokore Shop..." 
+                            class="w-full pl-10 pr-4 py-2 bg-[#111118] border border-[#242432] rounded-xl text-sm focus:outline-none focus:border-amber-400 text-slate-200 placeholder:text-slate-500 transition-colors">
+                    </div>
+
+                    <button id="wishlistModalBtn" class="relative px-3.5 py-2 bg-[#111118] hover:bg-[#181822] border border-[#242432] rounded-xl text-sm font-bold flex items-center gap-2 transition-all hover:border-amber-400 text-slate-200">
+                        <i class="fa-solid fa-heart text-red-500"></i>
+                        <span class="hidden sm:inline">Favoritos</span>
+                        <span id="wishlistBadge" class="hidden bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-extrabold">0</span>
+                    </button>
+
+                    <button id="cartBtn" class="relative px-4 py-2 bg-[#111118] hover:bg-[#181822] border border-[#242432] rounded-xl text-sm font-bold flex items-center gap-2 transition-all hover:border-amber-400">
+                        <i class="fa-solid fa-cart-shopping text-amber-400"></i>
+                        <span>Carrito</span>
+                        <span id="cartBadge" class="hidden bg-amber-500 text-black text-xs px-2 py-0.5 rounded-full font-extrabold">0</span>
+                    </button>
+
+                    <button id="openCouponsModalBtn" class="hidden px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-400 font-extrabold rounded-xl text-xs flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-ticket text-amber-400"></i>
+                        <span>Cupones</span>
+                    </button>
+
+                    <button id="openAddModalBtn" class="hidden px-4 py-2 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-extrabold rounded-xl text-sm flex items-center gap-2 shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all">
+                        <i class="fa-solid fa-plus text-black"></i>
+                        <span>Nuevo Producto</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-8">
+
+        <!-- Banner Hero con efecto Parallax / 3D Interactivo -->
+        <section id="heroCard" class="relative rounded-3xl overflow-hidden border border-amber-500/30 bg-gradient-to-r from-[#111118] via-[#1a1a26] to-[#0d0d14] shadow-[0_0_30px_rgba(212,175,55,0.15)] p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 cursor-pointer">
+            <div class="max-w-xl flex flex-col gap-4 text-center md:text-left z-10 pointer-events-none">
+                <div class="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full text-amber-400 text-xs font-bold tracking-widest uppercase w-fit mx-auto md:mx-0">
+                    <i class="fa-solid fa-crown text-xs"></i> Colección Exclusiva 2026
+                </div>
+                <h2 class="font-display font-black text-3xl sm:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-amber-300 to-yellow-500 leading-tight">
+                    ESTILO URBANO & PREMIUM
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base font-medium leading-relaxed">
+                    Indumentaria de alta calidad, streetwear y accesorios diseñados con la mejor confección. Envíos express a todo el territorio paraguayo 🇵🇾.
+                </p>
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-2 pointer-events-auto">
+                    <a href="#catalogSection" class="px-6 py-3 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all transform hover:-translate-y-0.5">
+                        Explorar Catálogo
+                    </a>
+                    <button id="openSizeCalcHeroBtn" class="px-5 py-3 bg-[#111118] hover:bg-[#181822] border border-amber-500/40 text-amber-400 font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-ruler-horizontal"></i> ¿Cuál es mi talle?
+                    </button>
+                    <button id="openCareGuideBtn" class="px-4 py-3 bg-[#111118] hover:bg-[#181822] border border-[#242432] text-slate-300 font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-shirt text-amber-400"></i> Guía de Cuidado
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Contenedor Parallax 3D de la Imagen Hero -->
+            <div class="relative w-full md:w-80 h-48 md:h-64 rounded-2xl overflow-hidden border border-amber-500/20 shadow-2xl bg-[#07070a] flex items-center justify-center group perspective-1000 pointer-events-none">
+                <img id="heroImage3D" src="logolokore1.png" alt="Lokore Preview" class="w-full h-full object-cover opacity-90 transition-transform duration-100 ease-out" onerror="this.onerror=null; this.src='logo.png'">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#07070a] via-transparent to-transparent"></div>
+            </div>
+        </section>
+
+        <!-- Metrics Dashboard (Admin) -->
+        <div id="adminMetrics" class="hidden grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in duration-200">
+            <div class="bg-[#111118] border border-[#242432] rounded-2xl p-4 flex items-center gap-4 shadow-lg">
+                <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </div>
+                <div>
+                    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Total Items</span>
+                    <h3 id="statTotalItems" class="text-xl font-bold text-white">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-[#111118] border border-[#242432] rounded-2xl p-4 flex items-center gap-4 shadow-lg">
+                <div class="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 text-xl">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div>
+                    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Stock Físico</span>
+                    <h3 id="statTotalStock" class="text-xl font-bold text-white">0 u.</h3>
+                </div>
+            </div>
+
+            <div class="bg-[#111118] border border-[#242432] rounded-2xl p-4 flex items-center gap-4 shadow-lg">
+                <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 text-xl">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Stock Bajo (&le; 3)</span>
+                    <h3 id="statLowStock" class="text-xl font-bold text-red-400">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-[#111118] border border-[#242432] rounded-2xl p-4 flex items-center gap-4 shadow-lg">
+                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl">
+                    <i class="fa-solid fa-vault"></i>
+                </div>
+                <div>
+                    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Valor Inventario</span>
+                    <h3 id="statTotalValue" class="text-lg font-bold text-emerald-400">₲ 0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categorías Tabs & Sección de Catálogo -->
+        <section id="catalogSection" class="scroll-mt-24">
+            <div class="flex items-center justify-between border-b border-[#242432] pb-2 overflow-x-auto">
+                <nav id="categoryTabs" class="flex gap-2 min-w-max pb-1">
+                    <button data-category="ALL" class="category-tab active px-4 py-2 rounded-xl text-sm font-bold transition-all">
+                        <i class="fa-solid fa-border-all mr-2"></i>Todos
+                    </button>
+                    <button data-category="remeras" class="category-tab px-4 py-2 rounded-xl text-sm font-bold transition-all">
+                        <i class="fa-solid fa-shirt mr-2"></i>Remeras
+                    </button>
+                    <button data-category="hoodies" class="category-tab px-4 py-2 rounded-xl text-sm font-bold transition-all">
+                        <i class="fa-solid fa-user-ninja mr-2"></i>Hoodies
+                    </button>
+                    <button data-category="shorts" class="category-tab px-4 py-2 rounded-xl text-sm font-bold transition-all">
+                        <i class="fa-solid fa-shorts mr-2"></i>Shorts
+                    </button>
+                    <button data-category="tazas" class="category-tab px-4 py-2 rounded-xl text-sm font-bold transition-all">
+                        <i class="fa-solid fa-mug-hot mr-2"></i>Tazas
+                    </button>
+                    <button data-category="gorras" class="category-tab px-4 py-2 rounded-xl text-sm font-bold transition-all">
+                        <i class="fa-solid fa-hat-cowboy mr-2"></i>Gorras
+                    </button>
+                </nav>
+
+                <div class="flex items-center gap-2 pl-4">
+                    <label for="sortBy" class="text-xs text-slate-400 font-bold uppercase hidden sm:inline">Ordenar:</label>
+                    <select id="sortBy" class="bg-[#111118] border border-[#242432] text-xs font-bold rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-amber-400">
+                        <option value="default">Recientes</option>
+                        <option value="price-asc">Precio: Menor a Mayor</option>
+                        <option value="price-desc">Precio: Mayor a Menor</option>
+                        <option value="stock-desc">Mayor Stock</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Grid de Productos -->
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+                <!-- Dinámico -->
+            </div>
+
+            <!-- Estado Vacío -->
+            <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center">
+                <div class="w-20 h-20 rounded-full bg-[#111118] border border-[#242432] flex items-center justify-center text-slate-500 mb-4 text-3xl">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-1">No se encontraron artículos</h3>
+                <p class="text-slate-400 text-sm max-w-sm mb-4">No hay prendas que coincidan con los filtros.</p>
+                <button id="resetFiltersBtn" class="text-xs text-amber-400 underline uppercase tracking-wider font-bold">Restablecer filtros</button>
+            </div>
+        </section>
+
+        <!-- Tarjetas Informativas -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+            <div class="bg-[#111118] border border-[#242432] rounded-2xl p-5 flex items-center gap-4 shadow-lg">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl shrink-0">
+                    <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-slate-100">Envíos a todo Paraguay</h4>
+                    <p class="text-xs text-slate-400">Entregas rápidas a cualquier departamento.</p>
+                </div>
+            </div>
+
+            <div class="bg-[#111118] border border-[#242432] rounded-2xl p-5 flex items-center gap-4 shadow-lg">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl shrink-0">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-slate-100">Pagos Flexibles</h4>
+                    <p class="text-xs text-slate-400">Transferencias, Giros o Efectivo.</p>
+                </div>
+            </div>
+
+            <div class="bg-[#111118] border border-[#242432] rounded-2xl p-5 flex items-center gap-4 shadow-lg">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl shrink-0">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-slate-100">Atención Directa</h4>
+                    <p class="text-xs text-slate-400">Asesoramiento personal al instante.</p>
+                </div>
+            </div>
+
+            <div class="bg-[#111118] border border-[#242432] rounded-2xl p-5 flex items-center gap-4 shadow-lg">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl shrink-0">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-slate-100">Calidad Garantizada</h4>
+                    <p class="text-xs text-slate-400">Prendas con acabados premium.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-[#242432] bg-[#07070a] py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p>&copy; 2026 LOKORE SHOP Paraguay. All Rights Reserved.</p>
+            <div class="flex items-center gap-4">
+                <!-- Botón Abrir FAQ -->
+                <button id="openFaqModalBtn" class="hover:text-amber-400 transition-colors flex items-center gap-1 font-bold">
+                    <i class="fa-solid fa-circle-question text-[10px]"></i> Preguntas Frecuentes
+                </button>
+                <button id="openLoginModalBtn" class="hover:text-amber-400 transition-colors flex items-center gap-1 font-bold">
+                    <i class="fa-solid fa-lock text-[10px]"></i> Acceso Admin
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL DE PREGUNTAS FRECUENTES (FAQ INTEGRADO) -->
+    <div id="faqModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-[#111118] border border-amber-500/40 rounded-3xl w-full max-w-lg overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+            <div class="p-5 border-b border-[#242432] flex items-center justify-between bg-[#07070a]">
+                <h3 class="font-display font-bold text-base text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-question"></i> Preguntas Frecuentes (FAQ)
+                </h3>
+                <button id="closeFaqModalBtn" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 max-h-96 overflow-y-auto flex flex-col gap-3 text-xs">
+                <div class="p-3.5 bg-[#07070a] border border-[#242432] rounded-2xl">
+                    <h5 class="font-bold text-amber-300 text-sm mb-1">¿Cuáles son los métodos de pago?</h5>
+                    <p class="text-slate-300">Aceptamos Transferencias Bancarias (Sipap), Giros Tigo, Pix o Efectivo en entregas presenciales en Asunción/Central.</p>
+                </div>
+
+                <div class="p-3.5 bg-[#07070a] border border-[#242432] rounded-2xl">
+                    <h5 class="font-bold text-amber-300 text-sm mb-1">¿Cómo realizan los envíos?</h5>
+                    <p class="text-slate-300">Enviamos a todo el territorio paraguayo 🇵🇾 a través de Asunción Express o la transportadora/encomienda de tu preferencia en 24 a 48 hs.</p>
+                </div>
+
+                <div class="p-3.5 bg-[#07070a] border border-[#242432] rounded-2xl">
+                    <h5 class="font-bold text-amber-300 text-sm mb-1">¿Puedo realizar un cambio de talle?</h5>
+                    <p class="text-slate-300">¡Claro que sí! Tienes hasta 7 días posteriores a la recepción de tu prenda para realizar cambios de talle, siempre que esté sin uso y con etiqueta.</p>
+                </div>
+
+                <div class="p-3.5 bg-[#07070a] border border-[#242432] rounded-2xl">
+                    <h5 class="font-bold text-amber-300 text-sm mb-1">¿Cómo finalizo mi compra?</h5>
+                    <p class="text-slate-300">Agregas las prendas al carrito y al presionar "Comprar por WhatsApp" se enviará la lista completa de tu pedido directamente a nuestro equipo de atención.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FAVORITOS / WISHLIST -->
+    <div id="wishlistModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-[#111118] border border-red-500/30 rounded-3xl w-full max-w-lg overflow-hidden shadow-[0_0_30px_rgba(239,68,68,0.2)]">
+            <div class="p-5 border-b border-[#242432] flex items-center justify-between bg-[#07070a]">
+                <h3 class="font-display font-bold text-base text-red-400 flex items-center gap-2">
+                    <i class="fa-solid fa-heart"></i> Tu Lista de Deseos (Favoritos)
+                </h3>
+                <button id="closeWishlistModalBtn" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div id="wishlistItemsContainer" class="p-6 max-h-96 overflow-y-auto flex flex-col gap-3">
+                <!-- Dinámico -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL GUÍA DE CUIDADO DE PRENDAS -->
+    <div id="careGuideModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-[#111118] border border-amber-500/40 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+            <div class="p-5 border-b border-[#242432] flex items-center justify-between bg-[#07070a]">
+                <h3 class="font-display font-bold text-base text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-shirt"></i> Guía de Cuidado de Prendas
+                </h3>
+                <button id="closeCareGuideModalBtn" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 flex flex-col gap-4 text-xs text-slate-300">
+                <div class="flex items-start gap-3 p-3 bg-[#07070a] rounded-2xl border border-[#242432]">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 font-bold">
+                        <i class="fa-solid fa-droplet"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-slate-100 text-sm mb-0.5">Lavar con agua fría</h5>
+                        <p class="text-slate-400">Lava las prendas del revés a una temperatura máxima de 30°C para preservar los colores y estampados.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 bg-[#07070a] rounded-2xl border border-[#242432]">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 font-bold">
+                        <i class="fa-solid fa-ban font-bold"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-slate-100 text-sm mb-0.5">Evitar secadoras</h5>
+                        <p class="text-slate-400">Seca a la sombra. El calor excesivo de la secadora puede encoger prendas 100% algodón peinado.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 bg-[#07070a] rounded-2xl border border-[#242432]">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 font-bold">
+                        <i class="fa-solid fa-temperature-half"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-slate-100 text-sm mb-0.5">Planchar del revés</h5>
+                        <p class="text-slate-400">No pases la plancha directamente sobre estampados en serigrafía o bordados directos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE GESTIÓN DE CUPONES (ADMIN) -->
+    <div id="couponsModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-[#111118] border border-amber-500/40 rounded-3xl w-full max-w-lg overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+            <div class="p-5 border-b border-[#242432] flex items-center justify-between bg-[#07070a]">
+                <h3 class="font-display font-bold text-base text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-ticket"></i> Gestión de Cupones de Descuento
+                </h3>
+                <button id="closeCouponsModalBtn" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 flex flex-col gap-5">
+                <form id="addCouponForm" class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#07070a] p-4 rounded-2xl border border-[#242432]">
+                    <div class="sm:col-span-1">
+                        <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Código</label>
+                        <input type="text" id="newCouponCode" placeholder="VERANO20" required uppercase
+                            class="w-full bg-[#111118] border border-[#242432] rounded-xl px-3 py-1.5 text-xs text-white uppercase font-mono focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">% Descuento</label>
+                        <input type="number" id="newCouponRate" placeholder="20" min="1" max="99" required
+                            class="w-full bg-[#111118] border border-[#242432] rounded-xl px-3 py-1.5 text-xs text-white focus:border-amber-400">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full py-1.5 bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-extrabold text-xs rounded-xl uppercase tracking-wider hover:opacity-90">
+                            Crear
+                        </button>
+                    </div>
+                </form>
+
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Cupones Activos</h4>
+                    <div id="couponsListContainer" class="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">
+                        <!-- Dinámico -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Calculadora de Talle -->
+    <div id="sizeCalcModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-[#111118] border border-amber-500/40 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+            <div class="p-5 border-b border-[#242432] flex items-center justify-between bg-[#07070a]">
+                <h3 class="font-display font-bold text-base text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-ruler-horizontal"></i> Calculadora de Talles Lokore
+                </h3>
+                <button id="closeSizeCalcModalBtn" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 flex flex-col gap-4">
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Ingresa tus medidas aproximadas para que te recomendemos el talle de prenda ideal.
+                </p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Estatura (cm)</label>
+                        <input type="number" id="calcHeight" placeholder="Ej: 175" 
+                            class="w-full bg-[#07070a] border border-[#242432] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-400 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Peso (kg)</label>
+                        <input type="number" id="calcWeight" placeholder="Ej: 75" 
+                            class="w-full bg-[#07070a] border border-[#242432] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-400 text-white">
+                    </div>
+                </div>
+
+                <button id="calculateSizeBtn" class="w-full py-2.5 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-extrabold rounded-xl text-xs uppercase tracking-wider shadow-lg">
+                    Calcular Mi Talle
+                </button>
+
+                <div id="sizeResultContainer" class="hidden p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-center flex flex-col items-center gap-1">
+                    <span class="text-[10px] text-amber-400 font-bold uppercase tracking-widest">Talle Recomendado</span>
+                    <span id="recommendedSizeText" class="font-display font-black text-3xl text-white">L</span>
+                    <p class="text-[11px] text-slate-300">Basado en un calce estándar urbano / streetwear.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick View Modal -->
+    <div id="quickViewModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-[#111118] border border-amber-500/30 rounded-3xl w-full max-w-2xl overflow-hidden shadow-[0_0_40px_rgba(212,175,55,0.2)] flex flex-col md:flex-row">
+            <div class="w-full md:w-1/2 h-64 md:h-auto bg-[#07070a] relative overflow-hidden">
+                <img id="qvImage" src="" alt="" class="w-full h-full object-cover">
+                <span id="qvCategory" class="absolute top-3 left-3 bg-[#07070a]/90 border border-amber-500/30 text-amber-400 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg"></span>
+            </div>
+            <div class="p-6 w-full md:w-1/2 flex flex-col justify-between gap-4">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span id="qvId" class="text-xs text-slate-400 font-bold"></span>
+                        <button id="closeQuickViewBtn" class="text-slate-400 hover:text-white text-xl">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <h3 id="qvTitle" class="font-display font-black text-xl text-white mb-2"></h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Confeccionado con insumos premium, estampados resistentes de alta resolución y acabado de catálogo oficial LOKORE.
+                    </p>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Talles Disponibles:</span>
+                        <button id="qvOpenSizeCalcBtn" class="text-[10px] text-amber-400 underline font-bold uppercase">¿Dudas con tu talle?</button>
+                    </div>
+                    <div id="qvSizesContainer" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <div class="pt-3 border-t border-[#242432] flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase text-slate-400 block -mb-1">Precio</span>
+                        <span id="qvPrice" class="font-extrabold text-2xl text-amber-400"></span>
+                    </div>
+                    <button id="qvAddToCartBtn" class="px-5 py-2.5 bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg hover:opacity-90">
+                        <i class="fa-solid fa-cart-plus mr-1"></i> Agregar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Login Admin -->
+    <div id="loginModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-[#111118] border border-[#242432] rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl">
+            <div class="p-5 border-b border-[#242432] flex items-center justify-between bg-[#07070a]">
+                <h3 class="font-display font-bold text-base text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield"></i> LOKORE Admin
+                </h3>
+                <button id="closeLoginModalBtn" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <form id="loginForm" class="p-6 flex flex-col gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Usuario</label>
+                    <input type="text" id="loginUser" required placeholder="admin" 
+                        class="w-full bg-[#07070a] border border-[#242432] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-400 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Contraseña</label>
+                    <input type="password" id="loginPass" required placeholder="••••••••" 
+                        class="w-full bg-[#07070a] border border-[#242432] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-400 text-white">
+                </div>
+                <div id="loginErrorMsg" class="hidden text-xs text-red-400 text-center font-bold">
+                    Usuario o contraseña incorrectos
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-extrabold rounded-xl text-xs uppercase tracking-wider shadow-lg mt-2">
+                    Ingresar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Producto Admin -->
+    <div id="productModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-[#111118] border border-[#242432] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div class="p-5 border-b border-[#242432] flex items-center justify-between bg-[#07070a]">
+                <h3 id="modalTitle" class="font-display font-bold text-lg text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-plus-circle"></i> Nuevo Producto
+                </h3>
+                <button id="closeModalBtn" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form id="productForm" class="p-6 flex flex-col gap-4">
+                <input type="hidden" id="prodId">
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Nombre del Producto</label>
+                    <input type="text" id="prodTitle" required placeholder="Ej: Lokore Black Oversized" 
+                        class="w-full bg-[#07070a] border border-[#242432] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-400 text-white">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Categoría</label>
+                        <select id="prodCategory" required class="w-full bg-[#07070a] border border-[#242432] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-400 text-white">
+                            <option value="remeras">Remeras</option>
+                            <option value="hoodies">Hoodies</option>
+                            <option value="shorts">Shorts</option>
+                            <option value="tazas">Tazas</option>
+                            <option value="gorras">Gorras</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Talles Disponibles</label>
+                        <input type="text" id="prodSizesInput" placeholder="S, M, L, XL" required
+                            class="w-full bg-[#07070a] border border-[#242432] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-400 text-white">
+                        <span class="text-[9px] text-slate-500">Separados por coma</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Precio (₲ Guaraníes)</label>
+                        <input type="number" id="prodPrice" step="1000" min="0" required placeholder="120000" 
+                            class="w-full bg-[#07070a] border border-[#242432] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-400 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Stock Inicial</label>
+                        <input type="number" id="prodStock" min="0" required placeholder="10" 
+                            class="w-full bg-[#07070a] border border-[#242432] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-400 text-white">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Cargar Imagen desde PC</label>
+                    <input type="file" id="prodFileInput" accept="image/*" 
+                        class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#181822] file:text-amber-400 hover:file:bg-amber-500/20 cursor-pointer">
+                    
+                    <div class="mt-2 flex items-center gap-3">
+                        <img id="imagePreview" src="" class="w-14 h-14 object-cover rounded-xl border border-[#242432] hidden">
+                        <span id="imagePreviewText" class="text-[10px] text-slate-500">O pega una URL:</span>
+                    </div>
+
+                    <input type="url" id="prodImage" placeholder="https://..." 
+                        class="w-full bg-[#07070a] border border-[#242432] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-amber-400 text-white mt-2">
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4 pt-4 border-t border-[#242432]">
+                    <button type="button" id="cancelModalBtn" class="px-4 py-2 rounded-xl border border-[#242432] text-xs font-bold uppercase tracking-wider hover:bg-[#181822]">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-extrabold rounded-xl text-xs uppercase tracking-wider hover:opacity-90">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Carrito Slide-over con Cupones -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex justify-end">
+        <div class="w-full max-w-md bg-[#07070a] border-l border-[#242432] h-full flex flex-col shadow-2xl">
+            <div class="p-5 border-b border-[#242432] flex items-center justify-between bg-[#111118]">
+                <div class="flex items-center gap-2 text-amber-400 font-display font-bold text-lg">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Tu Pedido LOKORE</span>
+                </div>
+                <button id="closeCartBtn" class="text-slate-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="cartItemsContainer" class="flex-grow p-4 overflow-y-auto flex flex-col gap-3 divide-y divide-[#242432]">
+                <!-- Items dinámicos -->
+            </div>
+
+            <div class="p-4 bg-[#111118] border-t border-[#242432] flex flex-col gap-2">
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">¿Tienes un Cupón de Descuento?</label>
+                <div class="flex gap-2">
+                    <input type="text" id="couponCodeInput" placeholder="Ej: LOKORE10" 
+                        class="flex-1 bg-[#07070a] border border-[#242432] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-amber-400 text-white uppercase font-mono">
+                    <button id="applyCouponBtn" class="px-4 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-400 font-extrabold text-xs rounded-xl uppercase tracking-wider transition-all">
+                        Aplicar
+                    </button>
+                </div>
+                <div id="couponMsg" class="hidden text-[11px] font-bold"></div>
+            </div>
+
+            <div class="p-5 border-t border-[#242432] bg-[#111118] flex flex-col gap-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1">Tu Nombre Completo</label>
+                    <input type="text" id="clientNameInput" placeholder="Ej: Juan Pérez" 
+                        class="w-full bg-[#07070a] border border-[#242432] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-amber-400 text-white">
+                </div>
+
+                <div id="discountRow" class="hidden flex items-center justify-between text-xs text-amber-400 font-bold">
+                    <span>Descuento Aplicado:</span>
+                    <span id="discountAmountText">-₲ 0</span>
+                </div>
+
+                <div class="flex items-center justify-between text-base pt-1">
+                    <span class="text-slate-400 font-medium text-sm">Total a Pagar:</span>
+                    <span id="cartTotal" class="font-bold text-2xl text-amber-400 tracking-tight">₲ 0</span>
+                </div>
+
+                <button id="checkoutWhatsAppBtn" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-black font-extrabold rounded-xl text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.3)] flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>Comprar por WhatsApp</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTÓN FLOTANTE DIRECTO A WHATSAPP CON BRILLO NEÓN -->
+    <a href="https://wa.me/595984862642?text=¡Hola%20LOKORE%20SHOP!%20Tengo%20una%20consulta." target="_blank" rel="noopener noreferrer" 
+        class="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-emerald-500 text-black flex items-center justify-center text-2xl shadow-[0_0_25px_rgba(16,185,129,0.6)] hover:scale-110 hover:shadow-[0_0_35px_rgba(16,185,129,0.9)] transition-all duration-300">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Notificación Flotante Social Proof -->
+    <div id="toastNotification" class="fixed bottom-5 left-5 z-40 bg-[#111118]/95 border border-amber-500/40 rounded-2xl p-3.5 shadow-[0_0_20px_rgba(212,175,55,0.2)] backdrop-blur-md flex items-center gap-3 max-w-xs transition-all duration-500 transform translate-y-20 opacity-0">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 to-yellow-500 flex items-center justify-center text-black shrink-0 font-bold">
+            <i class="fa-solid fa-bag-shopping"></i>
+        </div>
+        <div>
+            <p id="toastMessage" class="text-xs text-slate-200 font-medium leading-snug"></p>
+            <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Hace un momento</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
