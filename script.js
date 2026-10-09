@@ -16,24 +16,60 @@ let validCoupons = JSON.parse(localStorage.getItem('lokore_coupons_v1')) || DEFA
 const INITIAL_PRODUCTS = [
     {
         id: '1',
-        title: 'Remera Oversized Lokore Black',
+        title: 'Remera Personalizada CR7',
         category: 'remeras',
-        price: 130000,
-        stock: 15,
-        sizes: ['S', 'M', 'L', 'XL'],
-        image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80'
+        price: 150000,
+        stock: 4,
+        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+        image: 'https://cdn.discordapp.com/attachments/1235380821477691403/1557922088210276495/5f8dbc0e6b0d39091f084d1bb8a7ddce.png?ex=6ac98f82&is=6ac83e02&hm=994bc6532957b96778b90b79b769cd24364f469dd375dacb7966dc30e99e9abe&'
     },
-    {
+        {
         id: '2',
-        title: 'Hoodie Lokore Gold Edition',
-        category: 'hoodies',
-        price: 260000,
+        title: 'Remera Personalizada MESSI',
+        category: 'remeras',
+        price: 150000,
+        stock: 3,
+        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+        image: 'https://cdn.discordapp.com/attachments/1235380821477691403/1557922314748694640/88ff6acecb56b817a9a961d598f51a3d.png?ex=6aca3878&is=6ac8e6f8&hm=70fdf45b9f53479dd3d5eee1a655ccaf7c7c8acc95afac459ad24295bb1478cb&'
+    },
+        {
+        id: '3',
+        title: 'Remera Personalizada GOKU',
+        category: 'remeras',
+        price: 150000,
+        stock: 3,
+        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+        image: 'https://cdn.discordapp.com/attachments/1235380821477691403/1557924430695374869/a6b8cdf21e659fc56d53d4df5b739837.png?ex=6aca3a71&is=6ac8e8f1&hm=179c163a37472a191119f9c24302d041606d6f8b8efa99fe54f5ba8548aaaa59&'
+    },
+        {
+        id: '4',
+        title: 'Remera Personalizada GOJO',
+        category: 'remeras',
+        price: 150000,
         stock: 2,
-        sizes: ['M', 'L', 'XL'],
-        image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80'
+        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+        image: 'https://cdn.discordapp.com/attachments/1235380821477691403/1557929168962986024/3e7c64eb495f5b79dd6f8de2da51b11c.png?ex=6aca3eda&is=6ac8ed5a&hm=dad34efdf55531fcc531765d14352d4a27889a4d7237148b58af1076425c2397&'
+    },
+        {
+        id: '5',
+        title: 'Remera Personalizada LUFFY',
+        category: 'remeras',
+        price: 150000,
+        stock: 1,
+        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+        image: 'https://cdn.discordapp.com/attachments/1235380821477691403/1557929283400241242/2d1ec35e8fc409f5c35da07557f05a39.png?ex=6aca3ef6&is=6ac8ed76&hm=61011ca01ac66b9775805e744c5ed6ce2927cdd2d71560109a1ef998bdbc2371&'
     },
     {
-        id: '3',
+        id: '6',
+        title: 'Hoodie Personalizado CR7',
+        category: 'hoodies',
+        price: 180000,
+        stock: 2,
+        sizes: ['M', 'L', 'XL', 'XXL'],
+        image: 'https://cdn.discordapp.com/attachments/1235380821477691403/1558247759415476234/D_NQ_NP_889851-MLM88314911592_072025-O.png?ex=6acabed0&is=6ac96d50&hm=938599045e440535a8bac503f42432421b062d028214d50cdc073aaaaa50d78f&'
+    },
+    {
+        id: '7',
         title: 'Short Urbano Lokore Street',
         category: 'shorts',
         price: 115000,
@@ -42,7 +78,7 @@ const INITIAL_PRODUCTS = [
         image: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=600&q=80'
     },
     {
-        id: '4',
+        id: '8',
         title: 'Taza Lokore Matte Gold',
         category: 'tazas',
         price: 50000,
@@ -51,7 +87,7 @@ const INITIAL_PRODUCTS = [
         image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80'
     },
     {
-        id: '5',
+        id: '9',
         title: 'Gorra Lokore Snapback',
         category: 'gorras',
         price: 90000,
