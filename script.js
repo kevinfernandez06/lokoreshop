@@ -1,3 +1,19 @@
+// ==========================================
+// CONFIGURACIÓN DE FIREBASE (¡Reemplaza con tus datos!)
+// ==========================================
+const firebaseConfig = {
+    apiKey: "AIzaSyB1HvqTHmctiGF3P9JAW1dd0bCAFLkh6ys",
+    authDomain: "lokoreshop.firebaseapp.com",
+    projectId: "lokoreshop",
+    storageBucket: "lokoreshop.firebasestorage.app",
+    messagingSenderId: "842840907070",
+    appId: "1:842840907070:web:76cfb29125797b73c8606f",
+  };
+
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 const WHATSAPP_PHONE = '595984862642';
 
 const ADMIN_CREDENTIALS = {
@@ -23,7 +39,7 @@ const INITIAL_PRODUCTS = [
         sizes: ['S', 'M', 'L', 'XL', 'XXL'],
         image: 'https://cdn.discordapp.com/attachments/1235380821477691403/1557922088210276495/5f8dbc0e6b0d39091f084d1bb8a7ddce.png?ex=6ac98f82&is=6ac83e02&hm=994bc6532957b96778b90b79b769cd24364f469dd375dacb7966dc30e99e9abe&'
     },
-        {
+    {
         id: '2',
         title: 'Remera Personalizada MESSI',
         category: 'remeras',
@@ -32,7 +48,7 @@ const INITIAL_PRODUCTS = [
         sizes: ['S', 'M', 'L', 'XL', 'XXL'],
         image: 'https://cdn.discordapp.com/attachments/1235380821477691403/1557922314748694640/88ff6acecb56b817a9a961d598f51a3d.png?ex=6aca3878&is=6ac8e6f8&hm=70fdf45b9f53479dd3d5eee1a655ccaf7c7c8acc95afac459ad24295bb1478cb&'
     },
-        {
+    {
         id: '3',
         title: 'Remera Personalizada GOKU',
         category: 'remeras',
@@ -41,7 +57,7 @@ const INITIAL_PRODUCTS = [
         sizes: ['S', 'M', 'L', 'XL', 'XXL'],
         image: 'https://cdn.discordapp.com/attachments/1235380821477691403/1557924430695374869/a6b8cdf21e659fc56d53d4df5b739837.png?ex=6aca3a71&is=6ac8e8f1&hm=179c163a37472a191119f9c24302d041606d6f8b8efa99fe54f5ba8548aaaa59&'
     },
-        {
+    {
         id: '4',
         title: 'Remera Personalizada GOJO',
         category: 'remeras',
@@ -50,7 +66,7 @@ const INITIAL_PRODUCTS = [
         sizes: ['S', 'M', 'L', 'XL', 'XXL'],
         image: 'https://cdn.discordapp.com/attachments/1235380821477691403/1557929168962986024/3e7c64eb495f5b79dd6f8de2da51b11c.png?ex=6aca3eda&is=6ac8ed5a&hm=dad34efdf55531fcc531765d14352d4a27889a4d7237148b58af1076425c2397&'
     },
-        {
+    {
         id: '5',
         title: 'Remera Personalizada LUFFY',
         category: 'remeras',
@@ -97,7 +113,7 @@ const INITIAL_PRODUCTS = [
     }
 ];
 
-let products = JSON.parse(localStorage.getItem('lokore_products_v1')) || INITIAL_PRODUCTS;
+let products = [];
 let cart = JSON.parse(localStorage.getItem('lokore_cart_v1')) || [];
 let wishlist = JSON.parse(localStorage.getItem('lokore_wishlist_v1')) || [];
 let selectedSizesMap = {};
@@ -111,6 +127,67 @@ let appliedDiscountRate = 0;
 let appliedCouponCode = '';
 
 let audioCtx = null;
+
+// Cargar productos desde Firebase al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+    cargarProductosDesdeNube();
+    setupEventListeners();
+    updateLiveClock();
+    setInterval(updateLiveClock, 1000);
+    startSocialProofToasts();
+});
+
+function cargarProductosDesdeNube() {
+    db.collection('products').get().then((querySnapshot) => {
+        if (querySnapshot.empty) {
+            // Si la base de datos está vacía, subimos los productos iniciales
+            INITIAL_PRODUCTS.forEach(prod => {
+                db.collection('products').doc(prod.id).set(prod);
+            });
+            products = INITIAL_PRODUCTS;
+        } else {
+            products = [];
+            querySnapshot.forEach((doc) => {
+                products.push(doc.data());
+            });
+        }
+        renderApp();
+    }).catch((error) => {
+        console.error("Error cargando productos: ", error);
+        products = INITIAL_PRODUCTS; // Fallback
+        renderApp();
+    });
+}
+
+// Guardar o actualizar un producto en Firestore
+function guardarProductoEnNube(prod) {
+    db.collection('products').doc(prod.id).set(prod).then(() => {
+        cargarProductosDesdeNube();
+    }).catch((error) => {
+        console.error("Error al guardar en nube: ", error);
+    });
+}
+
+// Eliminar producto de Firestore
+function eliminarProductoDeNube(id) {
+    db.collection('products').doc(id).delete().then(() => {
+        cargarProductosDesdeNube();
+    }).catch((error) => {
+        console.error("Error al eliminar de nube: ", error);
+    });
+}
+
+function saveCart() {
+    localStorage.setItem('lokore_cart_v1', JSON.stringify(cart));
+}
+
+function saveWishlist() {
+    localStorage.setItem('lokore_wishlist_v1', JSON.stringify(wishlist));
+}
+
+function saveCoupons() {
+    localStorage.setItem('lokore_coupons_v1', JSON.stringify(validCoupons));
+}
 
 function playSound(type = 'click') {
     try {
@@ -155,14 +232,6 @@ function playSound(type = 'click') {
 
 function formatPYG(amount) {
     return '₲ ' + Math.round(amount).toLocaleString('es-PY');
-}
-
-function saveCoupons() {
-    localStorage.setItem('lokore_coupons_v1', JSON.stringify(validCoupons));
-}
-
-function saveWishlist() {
-    localStorage.setItem('lokore_wishlist_v1', JSON.stringify(wishlist));
 }
 
 function toggleWishlist(productId) {
@@ -222,7 +291,7 @@ function calculateSize(heightCm, weightKg) {
     return 'XL';
 }
 
-// DOM Elements
+// Elementos del DOM y funciones de renderizado (se mantienen igual)
 const productsGrid = document.getElementById('productsGrid');
 const emptyState = document.getElementById('emptyState');
 const searchInput = document.getElementById('searchInput');
@@ -254,16 +323,13 @@ const prodFileInput = document.getElementById('prodFileInput');
 const imagePreview = document.getElementById('imagePreview');
 const prodImage = document.getElementById('prodImage');
 
-// FAQ Modal DOM
 const openFaqModalBtn = document.getElementById('openFaqModalBtn');
 const faqModal = document.getElementById('faqModal');
 const closeFaqModalBtn = document.getElementById('closeFaqModalBtn');
 
-// Parallax Hero DOM
 const heroCard = document.getElementById('heroCard');
 const heroImage3D = document.getElementById('heroImage3D');
 
-// Coupons Modal DOM
 const couponsModal = document.getElementById('couponsModal');
 const closeCouponsModalBtn = document.getElementById('closeCouponsModalBtn');
 const addCouponForm = document.getElementById('addCouponForm');
@@ -271,19 +337,16 @@ const newCouponCode = document.getElementById('newCouponCode');
 const newCouponRate = document.getElementById('newCouponRate');
 const couponsListContainer = document.getElementById('couponsListContainer');
 
-// Wishlist Modal DOM
 const wishlistModalBtn = document.getElementById('wishlistModalBtn');
 const wishlistBadge = document.getElementById('wishlistBadge');
 const wishlistModal = document.getElementById('wishlistModal');
 const closeWishlistModalBtn = document.getElementById('closeWishlistModalBtn');
 const wishlistItemsContainer = document.getElementById('wishlistItemsContainer');
 
-// Care Guide Modal DOM
 const openCareGuideBtn = document.getElementById('openCareGuideBtn');
 const careGuideModal = document.getElementById('careGuideModal');
 const closeCareGuideModalBtn = document.getElementById('closeCareGuideModalBtn');
 
-// Size Calc Modal DOM
 const sizeCalcModal = document.getElementById('sizeCalcModal');
 const openSizeCalcHeroBtn = document.getElementById('openSizeCalcHeroBtn');
 const qvOpenSizeCalcBtn = document.getElementById('qvOpenSizeCalcBtn');
@@ -313,30 +376,11 @@ const cartTotal = document.getElementById('cartTotal');
 const checkoutWhatsAppBtn = document.getElementById('checkoutWhatsAppBtn');
 const clientNameInput = document.getElementById('clientNameInput');
 
-// Coupon Cart DOM
 const couponCodeInput = document.getElementById('couponCodeInput');
 const applyCouponBtn = document.getElementById('applyCouponBtn');
 const couponMsg = document.getElementById('couponMsg');
 const discountRow = document.getElementById('discountRow');
 const discountAmountText = document.getElementById('discountAmountText');
-
-document.addEventListener('DOMContentLoaded', () => {
-    saveProducts();
-    renderApp();
-    setupEventListeners();
-    
-    updateLiveClock();
-    setInterval(updateLiveClock, 1000);
-    startSocialProofToasts();
-});
-
-function saveProducts() {
-    localStorage.setItem('lokore_products_v1', JSON.stringify(products));
-}
-
-function saveCart() {
-    localStorage.setItem('lokore_cart_v1', JSON.stringify(cart));
-}
 
 function renderApp() {
     adminBadgeHeader.classList.toggle('hidden', !isAdminLoggedIn);
@@ -637,23 +681,19 @@ function renderCart() {
 }
 
 function setupEventListeners() {
-    // FAQ Modal
     openFaqModalBtn.addEventListener('click', () => {
         faqModal.classList.remove('hidden');
         playSound('click');
     });
     closeFaqModalBtn.addEventListener('click', () => faqModal.classList.add('hidden'));
 
-    // EFECTO PARALLAX 3D EN HERO IMAGE
     if (heroCard && heroImage3D) {
         heroCard.addEventListener('mousemove', (e) => {
             const rect = heroCard.getBoundingClientRect();
             const x = e.clientX - rect.left - (rect.width / 2);
             const y = e.clientY - rect.top - (rect.height / 2);
-            
             const rotateX = (-y / rect.height) * 15;
             const rotateY = (x / rect.width) * 15;
-
             heroImage3D.style.transform = `scale(1.08) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         });
 
@@ -662,7 +702,6 @@ function setupEventListeners() {
         });
     }
 
-    // Favoritos / Wishlist Modal
     wishlistModalBtn.addEventListener('click', () => {
         renderWishlistModal();
         wishlistModal.classList.remove('hidden');
@@ -670,14 +709,12 @@ function setupEventListeners() {
     });
     closeWishlistModalBtn.addEventListener('click', () => wishlistModal.classList.add('hidden'));
 
-    // Guía de Cuidado
     openCareGuideBtn.addEventListener('click', () => {
         careGuideModal.classList.remove('hidden');
         playSound('click');
     });
     closeCareGuideModalBtn.addEventListener('click', () => careGuideModal.classList.add('hidden'));
 
-    // Modal Cupones Admin
     openCouponsModalBtn.addEventListener('click', () => {
         if (!isAdminLoggedIn) return;
         renderCouponsList();
@@ -701,7 +738,6 @@ function setupEventListeners() {
         }
     });
 
-    // Modal Calculadora
     openSizeCalcHeroBtn.addEventListener('click', () => {
         sizeCalcModal.classList.remove('hidden');
         playSound('click');
@@ -719,16 +755,13 @@ function setupEventListeners() {
         const h = parseFloat(calcHeight.value);
         const w = parseFloat(calcWeight.value);
         const resSize = calculateSize(h, w);
-
         recommendedSizeText.textContent = resSize;
         sizeResultContainer.classList.remove('hidden');
         playSound('success');
     });
 
-    // Aplicar Cupones en Carrito
     applyCouponBtn.addEventListener('click', () => {
         const code = couponCodeInput.value.trim().toUpperCase();
-
         if (validCoupons[code]) {
             appliedDiscountRate = validCoupons[code];
             appliedCouponCode = code;
@@ -926,7 +959,7 @@ function closeModal() {
 function saveProductForm() {
     if (!isAdminLoggedIn) return;
 
-    const id = document.getElementById('prodId').value;
+    const id = document.getElementById('prodId').value || Date.now().toString();
     const title = document.getElementById('prodTitle').value;
     const category = document.getElementById('prodCategory').value;
     const rawSizes = document.getElementById('prodSizesInput').value;
@@ -935,26 +968,9 @@ function saveProductForm() {
     const stock = parseInt(document.getElementById('prodStock').value, 10);
     const finalImage = currentBase64Image || prodImage.value || 'https://via.placeholder.com/400x300/111118/d4af37?text=Lokore+Shop';
 
-    if (id) {
-        const index = products.findIndex(p => p.id === id);
-        if (index !== -1) {
-            products[index] = { id, title, category, sizes, price, stock, image: finalImage };
-        }
-    } else {
-        const newProduct = {
-            id: Date.now().toString(),
-            title,
-            category,
-            sizes,
-            price,
-            stock,
-            image: finalImage
-        };
-        products.unshift(newProduct);
-    }
+    const productData = { id, title, category, sizes, price, stock, image: finalImage };
 
-    saveProducts();
-    renderApp();
+    guardarProductoEnNube(productData);
     closeModal();
     playSound('success');
 }
@@ -963,13 +979,11 @@ function deleteProduct(id) {
     if (!isAdminLoggedIn) return;
 
     if (confirm('¿Estás seguro de eliminar este producto del stock de Lokore Shop?')) {
-        products = products.filter(p => p.id !== id);
+        eliminarProductoDeNube(id);
         cart = cart.filter(item => item.id !== id);
         wishlist = wishlist.filter(favId => favId !== id);
-        saveProducts();
         saveCart();
         saveWishlist();
-        renderApp();
         playSound('delete');
     }
 }
