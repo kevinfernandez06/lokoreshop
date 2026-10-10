@@ -1,0 +1,22 @@
+{
+  "short_name": "LOKORE SHOP",
+  "name": "LOKORE SHOP Paraguay",
+  "description": "Tienda urbana de ropa y accesorios personalizados",
+  "icons": [
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#07070a",
+  "theme_color": "#d4af37",
+  "display": "standalone",
+  "orientation": "portrait"
+}

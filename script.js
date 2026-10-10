@@ -17,8 +17,8 @@ const db = firebase.firestore();
 const WHATSAPP_PHONE = '595984862642';
 
 const ADMIN_CREDENTIALS = {
-    user: 'admin',
-    pass: 'admin123'
+    user: 'kevinman',
+    pass: 'alefer.2006'
 };
 
 const DEFAULT_COUPONS = {
@@ -518,13 +518,23 @@ function renderProducts() {
         productsGrid.innerHTML = '';
         emptyState.classList.remove('hidden');
         emptyState.classList.add('flex');
+        document.getElementById('paginationContainer').classList.add('hidden');
         return;
     }
 
     emptyState.classList.add('hidden');
     emptyState.classList.remove('flex');
 
-    productsGrid.innerHTML = filtered.map(product => {
+    // --- CÁLCULO DE PAGINACIÓN ---
+    const totalPages = Math.ceil(filtered.length / productsPerPage);
+    if (currentPage > totalPages) currentPage = 1;
+
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const paginatedProducts = filtered.slice(startIndex, startIndex + productsPerPage);
+    // ----------------------------
+
+    productsGrid.innerHTML = paginatedProducts.map(product => {
+        // (El código interno de renderizado de cada tarjeta de producto se mantiene exactamente igual)
         const isLowStock = product.stock > 0 && product.stock <= 3;
         const isOutOfStock = product.stock === 0;
         const isFav = wishlist.includes(product.id);
@@ -615,6 +625,56 @@ function renderProducts() {
             </div>
         `;
     }).join('');
+
+    // --- RENDERIZAR BOTONES DE PAGINACIÓN ---
+    renderPaginationControls(totalPages);
+}
+
+function renderPaginationControls(totalPages) {
+    const paginationContainer = document.getElementById('paginationContainer');
+    if (totalPages <= 1) {
+        paginationContainer.classList.add('hidden');
+        return;
+    }
+
+    paginationContainer.classList.remove('hidden');
+    let html = '';
+
+    // Botón Anterior
+    html += `
+        <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled class="opacity-40 pointer-events-none"' : ''} 
+            class="px-3.5 py-2 rounded-xl bg-[#111118] border border-[#242432] text-xs font-bold text-slate-300 hover:border-amber-400">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+    `;
+
+    for (let i = 1; i <= totalPages; i++) {
+        const isActive = i === currentPage;
+        html += `
+            <button onclick="changePage(${i})" 
+                class="w-9 h-9 rounded-xl border text-xs font-bold transition-all ${isActive ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_10px_rgba(212,175,55,0.4)]' : 'bg-[#111118] text-slate-300 border-[#242432] hover:border-amber-400'}">
+                ${i}
+            </button>
+        `;
+    }
+
+    // Botón Siguiente
+    html += `
+        <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled class="opacity-40 pointer-events-none"' : ''} 
+            class="px-3.5 py-2 rounded-xl bg-[#111118] border border-[#242432] text-xs font-bold text-slate-300 hover:border-amber-400">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    `;
+
+    paginationContainer.innerHTML = html;
+}
+
+function changePage(page) {
+    currentPage = page;
+    renderProducts();
+    playSound('click');
+    // Hacer scroll suave hacia la sección de catálogo para una mejor experiencia
+    document.getElementById('catalogSection').scrollIntoView({ behavior: 'smooth' });
 }
 
 function renderCart() {
@@ -959,7 +1019,8 @@ function closeModal() {
 function saveProductForm() {
     if (!isAdminLoggedIn) return;
 
-    const id = document.getElementById('prodId').value || Date.now().toString();
+    const idInput = document.getElementById('prodId').value;
+    const id = idInput ? idInput : Date.now().toString();
     const title = document.getElementById('prodTitle').value;
     const category = document.getElementById('prodCategory').value;
     const rawSizes = document.getElementById('prodSizesInput').value;
@@ -970,9 +1031,26 @@ function saveProductForm() {
 
     const productData = { id, title, category, sizes, price, stock, image: finalImage };
 
-    guardarProductoEnNube(productData);
+    // Solución: Actualizar de forma optimista el arreglo local y la interfaz al instante, 
+    // mientras se guarda en segundo plano en Firebase.
+    const existingIndex = products.findIndex(p => p.id === id);
+    if (existingIndex >= 0) {
+        products[existingIndex] = productData;
+    } else {
+        products.unshift(productData); // Lo añade al inicio para que lo veas de inmediato
+    }
+
+    renderApp(); // Refresca la pantalla al instante
     closeModal();
     playSound('success');
+
+    // Guardar en la nube en segundo plano
+    db.collection('products').doc(id).set(productData).then(() => {
+        cargarProductosDesdeNube(); // Sincroniza con la base de datos oficial
+    }).catch((error) => {
+        console.error("Error al guardar en nube: ", error);
+        alert("Hubo un error al guardar en Firebase. Revisa la consola o tus reglas de seguridad.");
+    });
 }
 
 function deleteProduct(id) {
@@ -1041,4 +1119,16 @@ function removeFromCart(cartItemId) {
     saveCart();
     renderCart();
     playSound('delete');
+}
+
+let currentPage = 1;
+const productsPerPage = 8; // Cantidad de productos a mostrar por página
+
+// Registrar Service Worker para PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then((reg) => console.log('PWA Service Worker registrado correctamente', reg))
+      .catch((err) => console.error('Error registrando Service Worker', err));
+  });
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOKORE SHOP - Exclusive Apparel & Store</title>
+    <title>LOKORE SHOP - Ropas y Accesorios</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="logo.png">
@@ -41,6 +41,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Archivo CSS local -->
     <link rel="stylesheet" href="styles.css">
+    <!-- Enlace al Manifest para la PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#d4af37">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body class="bg-[#07070a] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-400 selection:text-black">
 
@@ -218,8 +223,8 @@
                         <i class="fa-solid fa-user-ninja mr-2"></i>Hoodies
                     </button>
                     <button data-category="shorts" class="category-tab px-4 py-2 rounded-xl text-sm font-bold transition-all">
-                        <i class="fa-solid fa-shorts mr-2"></i>Shorts
-                    </button>
+    <i class="fa-solid fa-person-running mr-2"></i>Shorts
+</button>
                     <button data-category="tazas" class="category-tab px-4 py-2 rounded-xl text-sm font-bold transition-all">
                         <i class="fa-solid fa-mug-hot mr-2"></i>Tazas
                     </button>
@@ -239,7 +244,6 @@
                 </div>
             </div>
 
-            <!-- Grid de Productos -->
             <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
                 <!-- Dinámico -->
             </div>
@@ -253,6 +257,12 @@
                 <p class="text-slate-400 text-sm max-w-sm mb-4">No hay prendas que coincidan con los filtros.</p>
                 <button id="resetFiltersBtn" class="text-xs text-amber-400 underline uppercase tracking-wider font-bold">Restablecer filtros</button>
             </div>
+
+            <!-- 🎯 AQUÍ DEBE IR EXACTAMENTE (Justo antes de cerrar la sección del catálogo) -->
+            <div id="paginationContainer" class="flex items-center justify-center gap-2 mt-8 hidden">
+                <!-- Se generará dinámicamente desde JavaScript -->
+            </div>
+
         </section>
 
         <!-- Tarjetas Informativas -->
